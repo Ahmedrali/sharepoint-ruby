@@ -54,7 +54,13 @@ module Sharepoint
   private
     def authenticate_to_sts user, password, sts_url
       query    = Soap::Authenticate.new username: user, password: password, url: @site.authentication_path
-      response = Curl::Easy.http_post sts_url, query.render rescue raise ConnexionToStsFailed.new
+      # response = Curl::Easy.http_post sts_url, query.render rescue raise ConnexionToStsFailed.new
+      
+      # => Use SSL version 3 to fix Heroku timeout problem
+      response =  Curl::Easy.new sts_url 
+      response.use_ssl = 3
+      response.ssl_version = 3
+      response.http_post query.render rescue raise ConnexionToStsFailed.new
 
       response.body_str.scan(/<wsse:BinarySecurityToken[^>]*>([^<]+)</) do
         offset          = ($~.offset 1)
@@ -73,7 +79,14 @@ module Sharepoint
     end
 
     def get_access_token
-      http = Curl::Easy.http_post @site.authentication_path, @security_token
+      # http = Curl::Easy.http_post @site.authentication_path, @security_token
+      
+      # => Use SSL version 3 to fix Heroku timeout problem        
+      http =  Curl::Easy.new @site.authentication_path 
+      http.use_ssl = 3
+      http.ssl_version = 3
+      http.http_post @security_token
+      
       @rtFa     = get_cookie_from_header http.header_str, 'rtFa'
       @fed_auth = get_cookie_from_header http.header_str, 'FedAuth'
       raise UnknownAuthenticationError.new if @fed_auth.nil? or @rtFa.nil?
