@@ -58,8 +58,6 @@ module Sharepoint
       
       # => Use SSL version 3 to fix Heroku timeout problem
       response =  Curl::Easy.new sts_url 
-      response.use_ssl = 3
-      response.ssl_version = 3
       response.http_post query.render rescue raise ConnexionToStsFailed.new
 
       response.body_str.scan(/<wsse:BinarySecurityToken[^>]*>([^<]+)</) do
