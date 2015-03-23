@@ -80,7 +80,8 @@ module Sharepoint
       # http = Curl::Easy.http_post @site.authentication_path, @security_token
       
       # => Use SSL version 3 to fix Heroku timeout problem        
-      http =  Curl::Easy.new @site.authentication_path 
+      http =  Curl::Easy.new @site.authentication_path
+      http.verbose = true 
       http.use_ssl = 3
       http.ssl_version = 3
       http.http_post @security_token
