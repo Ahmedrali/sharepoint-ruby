@@ -75,7 +75,6 @@ module Sharepoint
         end
         curl.verbose = true
         curl.use_ssl = 3
-        curl.ssl_version = 3
         @session.send :curl, curl unless not @session.methods.include? :curl
         block.call curl           unless block.nil?
       end

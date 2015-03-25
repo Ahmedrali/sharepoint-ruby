@@ -83,7 +83,6 @@ module Sharepoint
       http =  Curl::Easy.new @site.authentication_path
       http.verbose = true 
       http.use_ssl = 3
-      http.ssl_version = 3
       http.http_post @security_token
       
       @rtFa     = get_cookie_from_header http.header_str, 'rtFa'
